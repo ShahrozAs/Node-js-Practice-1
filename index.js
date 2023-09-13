@@ -235,15 +235,21 @@ server.use(express.static("public"));
 
 // Model - view -controller  MVC
 
-server.get("/products",productsController.readAllProduct);
-server.get("/products/:id",productsController.readProductById);
-server.post("/products", productsController.addNewProduct);
-// Update put product/:id      Overwrite
-server.put("/products/:id",productsController.overwriteProductById);
-//Update patch product/:id
-server.patch("/products/:id",productsController.UpdateProductById);
-//Delete Product
-server.delete("/products/:id", productsController.deleteProductById);
+
+const productRouter=require('./router/product')
+const userRouter=require('./router/user')
+server.use('/products',productRouter.route)
+server.use('/user',userRouter.route)
+
+// productRouter.route.get("/products",productsController.readAllProduct)
+// .get("/products/:id",productsController.readProductById)
+// .post("/products", productsController.addNewProduct)
+// // Update put product/:id      Overwrite
+// .put("/products/:id",productsController.overwriteProductById)
+// //Update patch product/:id
+// .patch("/products/:id",productsController.UpdateProductById)
+// //Delete Product
+// .delete("/products/:id", productsController.deleteProductById)
 
 
 // server.get("/demo", (req, res) => {
