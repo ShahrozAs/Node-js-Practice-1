@@ -112,6 +112,90 @@
 
 // server.listen(8000);
 
-
-
 // START EXPRESS ========================================================================
+
+const fs = require("fs");
+const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+const products = data.products;
+
+const express = require("express");
+
+const server = express();
+
+// SERVER.USE for middleware
+
+// Application level middleware
+// server.use((req, res, next) => {
+//   console.log(req.ip, req.hostname, req.get("User-Agent"));
+//   next();
+// });
+
+// ==========================================================
+// Route level middleware
+// ==========================================================
+
+// const auth=((req, res, next) => {
+//   console.log(req.query.password);
+//   if (req.query.password==="123") {
+
+//     next();
+//   } else {
+//     res.sendStatus(401)
+//   }
+// });
+
+// BODYPARSE use when we send data from json in body===============================================
+server.use(express.json());
+//===============================================
+
+//  use when we send data from form ===============================================
+// server.use(express.urlencoded);
+// ===============================================
+
+//  use when we send data from form ===============================================
+
+server.use(express.static("public"));
+// ===============================================
+
+
+
+
+const auth = (req, res, next) => {
+  console.log(req.body.password);
+  if (req.body.password === "123") {
+    next();
+  } else {
+    res.sendStatus(401);
+  }
+};
+
+// server.use(auth);
+
+// API - ENDPOINT - Route
+server.get("/", auth, (req, res) => {
+  res.json({ type: "GET" });
+});
+server.post("/", auth, (req, res) => {
+  res.json({ type: "POST" });
+});
+server.delete("/", (req, res) => {
+  res.json({ type: "DELETE" });
+});
+server.patch("/", (req, res) => {
+  res.json({ type: "PATCH" });
+});
+server.put("/", (req, res) => {
+  res.json({ type: "PUT" });
+});
+
+server.get("/demo", (req, res) => {
+  // res.send("<h1>hello world</h1>")
+  // res.sendFile("/Users/f3558/OneDrive/Desktop/Node js/index.html")
+  //   res.json(products);
+  //   res.sendStatus(404)
+  res.status(201).send("<h1>MR Sherry</h1>");
+});
+
+server.listen(8080, () => {
+  console.log("Server Started");
+});
