@@ -152,41 +152,86 @@ server.use(express.json());
 // server.use(express.urlencoded);
 // ===============================================
 
-//  use when we send data from form ===============================================
+// MORGAN======================================================================
+// const morgan = require("morgan");
+// server.use(morgan("default"));
+// MORGAN======================================================================
 
+//  use when we send data from form ===============================================
 server.use(express.static("public"));
 // ===============================================
 
+// THREE METHOD TO SEND DATA
+// query parameter
+// url parameter
+// body parameter
 
-
-
-const auth = (req, res, next) => {
-  console.log(req.body.password);
-  if (req.body.password === "123") {
-    next();
-  } else {
-    res.sendStatus(401);
-  }
-};
+// const auth = (req, res, next) => {
+//   // console.log(req.body.password);
+//   // if (req.body.password === "123") {
+//   //   next();
+//   // } else {
+//   //   res.sendStatus(401);
+//   // }
+//   next();
+// };
 
 // server.use(auth);
 
+//Products      C R U D
+
 // API - ENDPOINT - Route
-server.get("/", auth, (req, res) => {
-  res.json({ type: "GET" });
+// API rootCertificates , base url , example google.com/api/v2/
+// Read get /products
+server.get("/products", (req, res) => {
+  console.log(req.params);
+  res.json(products);
 });
-server.post("/", auth, (req, res) => {
-  res.json({ type: "POST" });
+
+// Read get /products/:id
+
+server.get("/products/:id", (req, res) => {
+  console.log(req.params);
+  const id = +req.params.id;
+  const product = products.find((p) => p.id === id);
+  res.json(product);
 });
-server.delete("/", (req, res) => {
-  res.json({ type: "DELETE" });
+
+server.post("/products", (req, res) => {
+  console.log(req.body);
+  products.push(req.body);
+  // res.json({type:"POST"});
+  res.json(req.json);
 });
-server.patch("/", (req, res) => {
-  res.json({ type: "PATCH" });
+
+// Update put product/:id      Overwrite
+server.put("/products/:id", (req, res) => {
+  const id = +req.params.id;
+  const productIndex = products.findIndex((p) => p.id === id);
+  products.splice(productIndex, 1, { ...req.body, id: id });
+
+  // res.json({ type: "PUT" });
+  res.status(201).json();
 });
-server.put("/", (req, res) => {
-  res.json({ type: "PUT" });
+
+//Update patch product/:id
+server.patch("/products/:id", (req, res) => {
+  const id =+req.params.id;
+  const productIndex=products.findIndex(p=>p.id===id);
+  const product=products[productIndex]
+  products.splice(productIndex,1,{...product,...req.body})
+  res.status(201).json({ type: "PATCH" });
 });
+
+//Delete Product
+server.delete("/products/:id", (req, res) => {
+  const id =+req.params.id;
+  const productIndex=products.findIndex(p=>p.id===id);
+  const product=products[productIndex]
+  products.splice(productIndex,1)
+  res.status(201).json(product);
+});
+
 
 server.get("/demo", (req, res) => {
   // res.send("<h1>hello world</h1>")
