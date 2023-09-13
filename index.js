@@ -114,10 +114,11 @@
 
 // START EXPRESS ========================================================================
 
-const fs = require("fs");
-const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
-const products = data.products;
+// const fs = require("fs");
+// const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+// const products = data.products;
 
+const productsController=require('./controller/product')
 const express = require("express");
 
 const server = express();
@@ -183,63 +184,75 @@ server.use(express.static("public"));
 // API - ENDPOINT - Route
 // API rootCertificates , base url , example google.com/api/v2/
 // Read get /products
-server.get("/products", (req, res) => {
-  console.log(req.params);
-  res.json(products);
-});
+// server.get("/products", (req, res) => {
+//   console.log(req.params);
+//   res.json(products);
+// });
 
-// Read get /products/:id
+// // Read get /products/:id
 
-server.get("/products/:id", (req, res) => {
-  console.log(req.params);
-  const id = +req.params.id;
-  const product = products.find((p) => p.id === id);
-  res.json(product);
-});
+// server.get("/products/:id", (req, res) => {
+//   console.log(req.params);
+//   const id = +req.params.id;
+//   const product = products.find((p) => p.id === id);
+//   res.json(product);
+// });
 
-server.post("/products", (req, res) => {
-  console.log(req.body);
-  products.push(req.body);
-  // res.json({type:"POST"});
-  res.json(req.json);
-});
+// server.post("/products", (req, res) => {
+//   console.log(req.body);
+//   products.push(req.body);
+//   // res.json({type:"POST"});
+//   res.json(req.json);
+// });
 
+// // Update put product/:id      Overwrite
+// server.put("/products/:id", (req, res) => {
+//   const id = +req.params.id;
+//   const productIndex = products.findIndex((p) => p.id === id);
+//   products.splice(productIndex, 1, { ...req.body, id: id });
+
+//   // res.json({ type: "PUT" });
+//   res.status(201).json();
+// });
+
+// //Update patch product/:id
+// server.patch("/products/:id", (req, res) => {
+//   const id =+req.params.id;
+//   const productIndex=products.findIndex(p=>p.id===id);
+//   const product=products[productIndex]
+//   products.splice(productIndex,1,{...product,...req.body})
+//   res.status(201).json({ type: "PATCH" });
+// });
+
+// //Delete Product
+// server.delete("/products/:id", (req, res) => {
+//   const id =+req.params.id;
+//   const productIndex=products.findIndex(p=>p.id===id);
+//   const product=products[productIndex]
+//   products.splice(productIndex,1)
+//   res.status(201).json(product);
+// });
+
+// Model - view -controller  MVC
+
+server.get("/products",productsController.readAllProduct);
+server.get("/products/:id",productsController.readProductById);
+server.post("/products", productsController.addNewProduct);
 // Update put product/:id      Overwrite
-server.put("/products/:id", (req, res) => {
-  const id = +req.params.id;
-  const productIndex = products.findIndex((p) => p.id === id);
-  products.splice(productIndex, 1, { ...req.body, id: id });
-
-  // res.json({ type: "PUT" });
-  res.status(201).json();
-});
-
+server.put("/products/:id",productsController.overwriteProductById);
 //Update patch product/:id
-server.patch("/products/:id", (req, res) => {
-  const id =+req.params.id;
-  const productIndex=products.findIndex(p=>p.id===id);
-  const product=products[productIndex]
-  products.splice(productIndex,1,{...product,...req.body})
-  res.status(201).json({ type: "PATCH" });
-});
-
+server.patch("/products/:id",productsController.UpdateProductById);
 //Delete Product
-server.delete("/products/:id", (req, res) => {
-  const id =+req.params.id;
-  const productIndex=products.findIndex(p=>p.id===id);
-  const product=products[productIndex]
-  products.splice(productIndex,1)
-  res.status(201).json(product);
-});
+server.delete("/products/:id", productsController.deleteProductById);
 
 
-server.get("/demo", (req, res) => {
-  // res.send("<h1>hello world</h1>")
-  // res.sendFile("/Users/f3558/OneDrive/Desktop/Node js/index.html")
-  //   res.json(products);
-  //   res.sendStatus(404)
-  res.status(201).send("<h1>MR Sherry</h1>");
-});
+// server.get("/demo", (req, res) => {
+//   // res.send("<h1>hello world</h1>")
+//   // res.sendFile("/Users/f3558/OneDrive/Desktop/Node js/index.html")
+//   //   res.json(products);
+//   //   res.sendStatus(404)
+//   res.status(201).send("<h1>MR Sherry</h1>");
+// });
 
 server.listen(8080, () => {
   console.log("Server Started");
