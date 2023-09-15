@@ -118,9 +118,8 @@
 // const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
 // const products = data.products;
 
-const productsController=require('./controller/product')
+const productsController = require("./controller/product");
 const express = require("express");
-
 const server = express();
 
 // SERVER.USE for middleware
@@ -147,6 +146,7 @@ const server = express();
 
 // BODYPARSE use when we send data from json in body===============================================
 server.use(express.json());
+
 //===============================================
 
 //  use when we send data from form ===============================================
@@ -159,7 +159,7 @@ server.use(express.json());
 // MORGAN======================================================================
 
 //  use when we send data from form ===============================================
-server.use(express.static("public"));
+// server.use(express.static("public"));
 // ===============================================
 
 // THREE METHOD TO SEND DATA
@@ -235,12 +235,57 @@ server.use(express.static("public"));
 
 // Model - view -controller  MVC
 
+require("dotenv").config();
+const productRouter = require("./router/product");
+const userRouter = require("./router/user");
+const mongoose = require('mongoose');                             //for mongoose
+// const { Schema } = mongoose;
+// const morgan = require("morgan");
 
-const productRouter=require('./router/product')
-const userRouter=require('./router/user')
-server.use('/products',productRouter.route)
-server.use('/user',userRouter.route)
+//Middleware
+server.use(express.static("public"));
+server.use(express.json());
+server.use("/products", productRouter.route);
+server.use("/user", userRouter.route);
+// server.use(morgan("default"));
+// server.use(express.urlencoded);
 
+//db connection
+// mongoose.connect('mongodb://127.0.0.1:27017/ecommerce');
+
+main().catch(err => console.log(err));
+
+async function main() {
+  await mongoose.connect('mongodb://127.0.0.1:27017/ecommerce');
+  console.log("Database connected")
+
+  // use `await mongoose.connect('mongodb://user:password@127.0.0.1:27017/test');` if your database has auth enabled
+}
+
+//Schema 
+
+// const productSchema = new Schema({
+//   id: Number,
+//   title: String,
+//   description: String,
+//   price:Number,
+//   discountPercentage: Number,
+//   rating: Number,
+//   stock: Number,
+//   brand:String,
+//   category: String,
+//   thumbnail:String,
+//   images: [String]
+
+
+// });
+
+// const Product = mongoose.model('Product', productSchema);
+
+
+
+
+console.log("ENV", process.env.DB_PASSWORD);
 // productRouter.route.get("/products",productsController.readAllProduct)
 // .get("/products/:id",productsController.readProductById)
 // .post("/products", productsController.addNewProduct)
@@ -251,7 +296,6 @@ server.use('/user',userRouter.route)
 // //Delete Product
 // .delete("/products/:id", productsController.deleteProductById)
 
-
 // server.get("/demo", (req, res) => {
 //   // res.send("<h1>hello world</h1>")
 //   // res.sendFile("/Users/f3558/OneDrive/Desktop/Node js/index.html")
@@ -260,6 +304,6 @@ server.use('/user',userRouter.route)
 //   res.status(201).send("<h1>MR Sherry</h1>");
 // });
 
-server.listen(8080, () => {
+server.listen(process.env.PORT, () => {
   console.log("Server Started");
 });

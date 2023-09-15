@@ -1,6 +1,22 @@
 const fs = require("fs");
-const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
-const products = data.products;
+// const data = JSON.parse(fs.readFileSync("data.json", "utf-8"));
+// const products = data.products;
+const model =require('../model/product')
+const Product=model.Product;
+
+exports.addNewProduct = async(req, res) => {
+  // console.log(req.body);
+  // products.push(req.body);
+  // res.json({type:"POST"});
+  const product=new Product(req.body);
+  // product.title="MR Sherry";
+  // product.price=999;
+  // product.rating=4.5;
+  await product.save()
+  res.json(product)
+
+
+};
 
 exports.readAllProduct = (req, res) => {
   console.log(req.params);
@@ -11,12 +27,6 @@ exports.readProductById = (req, res) => {
   const id = +req.params.id;
   const product = products.find((p) => p.id === id);
   res.json(product);
-};
-exports.addNewProduct = (req, res) => {
-  console.log(req.body);
-  products.push(req.body);
-  // res.json({type:"POST"});
-  res.json(req.json);
 };
 exports.UpdateProductById = (req, res) => {
   const id = +req.params.id;
