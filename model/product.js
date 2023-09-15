@@ -3,13 +3,13 @@ const mongoose = require('mongoose');                             //for mongoose
 const { Schema } = mongoose;
 
 const productSchema = new Schema({
-    id: Number,
-    title: String,
+    id: {type:Number,min:7 ,required:true},
+    title: {type:String,required:true},
     description: String,
-    price:Number,
+    price:{type:Number,required:true,min:[0,'price must be greater then zero']},
     discountPercentage: Number,
     rating: Number,
-    stock: Number,
+    stock: {type:Number,max:[100,'stock must be less than 100']},
     brand:String,
     category: String,
     thumbnail:String,
